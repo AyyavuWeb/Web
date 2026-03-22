@@ -1,73 +1,140 @@
 # Ayyavu Construction Website
 
-A professional construction company website with admin panel for project management.
+A modern construction company website built with React and Supabase.
 
 ## Features
 
-- **Frontend:**
-  - Responsive design
-  - Project showcase with filtering
+- **Public Website:**
+  - Homepage with company overview
+  - Projects showcase with filtering
   - About us page
-  - Contact page
-  - Project details modal
+  - Contact form
+  - Responsive design
 
 - **Admin Panel:**
-  - Secure login (password: 12345)
+  - Secure authentication
   - Add/Edit/Delete projects
   - Image upload and management
   - Project status management
 
+## Tech Stack
+
+- **Frontend:** React 18, Vite
+- **Backend:** Supabase (PostgreSQL)
+- **Authentication:** Supabase Auth
+- **Storage:** Supabase Storage
+- **Routing:** React Router
+
 ## Setup Instructions
 
-1. **Database Setup:**
-   - Import the `database.sql` file into your MySQL database
-   - Update database credentials in `config.php` if needed
+### 1. Environment Variables
 
-2. **File Permissions:**
-   - Ensure `admin/uploads/` directory has write permissions (755 or 777)
+Update the `.env` file with your Supabase credentials:
 
-3. **Admin Access:**
-   - Navigate to `/admin/login.php`
-   - Password: `12345`
-
-## File Structure
-
-```
-/
-├── index.php              # Homepage
-├── projects.php           # Projects listing
-├── about.html            # About page
-├── contact.html          # Contact page
-├── config.php            # Database configuration
-├── get_project.php       # API for project details
-├── database.sql          # Database schema and sample data
-├── admin/
-│   ├── login.php         # Admin login
-│   ├── dashboard.php     # Admin dashboard
-│   ├── add-project.php   # Add new project
-│   ├── edit-project.php  # Edit projects list
-│   ├── update-project.php # Update specific project
-│   ├── insert_project.php # Handle project insertion
-│   ├── delete_image.php  # Delete project images
-│   └── uploads/          # Image upload directory
-└── assets/
-    └── images/           # Static images
+```env
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
-## Security Features
+### 2. Supabase Setup
 
-- SQL injection protection with prepared statements
-- File upload validation
-- Admin session management
-- Secure image upload handling
+1. **Create Storage Bucket:**
+   - Go to Supabase Dashboard → Storage
+   - Create bucket named `project-images`
+   - Make it public
 
-## Browser Compatibility
+2. **Add Storage Policies:**
+   ```sql
+   -- Allow public to view images
+   CREATE POLICY "Public can view images"
+   ON storage.objects FOR SELECT
+   TO public
+   USING (bucket_id = 'project-images');
 
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
+   -- Allow authenticated users to upload
+   CREATE POLICY "Authenticated can upload"
+   ON storage.objects FOR INSERT
+   TO authenticated
+   WITH CHECK (bucket_id = 'project-images');
+
+   -- Allow authenticated users to delete
+   CREATE POLICY "Authenticated can delete"
+   ON storage.objects FOR DELETE
+   TO authenticated
+   USING (bucket_id = 'project-images');
+   ```
+
+3. **Create Admin User:**
+   - Go to Authentication → Users
+   - Add user with email/password
+   - Auto-confirm the user
+
+### 3. Install Dependencies
+
+```bash
+npm install
+```
+
+### 4. Development
+
+```bash
+npm run dev
+```
+
+### 5. Build for Production
+
+```bash
+npm run build
+```
+
+## Project Structure
+
+```
+src/
+├── components/
+│   ├── Header.jsx
+│   └── Footer.jsx
+├── pages/
+│   ├── Home.jsx
+│   ├── Projects.jsx
+│   ├── About.jsx
+│   ├── Contact.jsx
+│   └── admin/
+│       ├── Login.jsx
+│       ├── Dashboard.jsx
+│       ├── AddProject.jsx
+│       ├── EditProjects.jsx
+│       └── UpdateProject.jsx
+├── lib/
+│   └── supabase.js
+├── App.jsx
+└── main.jsx
+```
+
+## Database Schema
+
+The project uses two main tables:
+
+- `projects` - Main project information
+- `project_images` - Project image gallery
+
+## Admin Access
+
+Navigate to `/admin/login` and use the credentials you created in Supabase Auth.
+
+## Deployment
+
+This project can be deployed to any static hosting service like:
+- Vercel
+- Netlify
+- GitHub Pages
+- Bolt Hosting
+
+Make sure to set the environment variables in your deployment platform.
 
 ## Support
 
-For technical support, contact the development team.
+For setup help, refer to the documentation files:
+- `START_HERE.md`
+- `FINAL_SETUP_STEPS.md`
+- `SUPABASE_COMPLETE_GUIDE.md`
